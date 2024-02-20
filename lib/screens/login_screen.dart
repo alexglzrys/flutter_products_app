@@ -31,53 +31,81 @@ class LoginScreen extends StatelessWidget {
                 ),
                 // Contenido principal - Formulario
                 Form(
+                    // La validación de los controles de este formulario se harán en tiempo real con base a la interacción del usuario
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
-                  children: [
-                    TextField(
-                      // Evitar el auto-corrector
-                      autocorrect: false,
-                      // Tipo de teclado al momento de usar la caja de texto
-                      keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(color: Colors.deepPurple),
-                      // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
-                      decoration: InputDecorations.authInputDecoration(
-                          labelText: 'Correo Electrónico',
-                          hintText: 'kakaroto@correo.com',
-                          prefixIcon: Icons.alternate_email),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      // Evitar el auto-corrector
-                      autocorrect: false,
-                      // De forma visual, el contenido de este input se mostrará ofuscado (password)
-                      obscureText: true,
-                      style: const TextStyle(color: Colors.deepPurple),
-                      // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
-                      decoration: InputDecorations.authInputDecoration(
-                          labelText: 'Contraseña',
-                          hintText: '******',
-                          prefixIcon: Icons.lock),
-                    ),
-                    const SizedBox(height: 16),
-                    MaterialButton(
-                      onPressed: () {
-                        // Todo: Login Submit
-                      },
-                      color: Colors.deepPurple,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      // Agregar un Padding al botón de envio
-                      child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Text(
-                            'Ingresar',
-                            style: TextStyle(color: Colors.white),
-                          )),
-                    )
-                  ],
-                ))
+                      children: [
+                        // a comparación del TextField, los TextFormField actuan como un widget avanzado que envuelve un TextField y le proporciona funciones adiconales como la validación. Asi mismo, lo integra facilmente con un formulario para que este se hga cargo de toda la gestión
+                        TextFormField(
+                          // Evitar el auto-corrector
+                          autocorrect: false,
+                          // Tipo de teclado al momento de usar la caja de texto
+                          keyboardType: TextInputType.emailAddress,
+                          style: const TextStyle(color: Colors.deepPurple),
+
+                          // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
+                          decoration: InputDecorations.authInputDecoration(
+                              labelText: 'Correo Electrónico',
+                              hintText: 'kakaroto@correo.com',
+                              prefixIcon: Icons.alternate_email),
+                          // Validación del contenido escrito en esta caja de texto
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'El correo electrónico es requerido';
+                            }
+                            // Expresión regular para la validación de correo electrónico
+                            String pattern =
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                            RegExp regExp = RegExp(pattern);
+                            if (!regExp.hasMatch(value)) {
+                              return 'El valor ingresado no luce como un correo válido';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          // Evitar el auto-corrector
+                          autocorrect: false,
+                          // De forma visual, el contenido de este input se mostrará ofuscado (password)
+                          obscureText: true,
+                          style: const TextStyle(color: Colors.deepPurple),
+                          // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
+                          decoration: InputDecorations.authInputDecoration(
+                              labelText: 'Contraseña',
+                              hintText: '******',
+                              prefixIcon: Icons.lock),
+                          // Validación del contenido escrito en esta caja de texto
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'La contraseña es un dato requerido';
+                            }
+                            if (value.length < 6) {
+                              return 'La contraseña debe ser de al menos 6 caracteres';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        MaterialButton(
+                          onPressed: () {
+                            // Todo: Login Submit
+                          },
+                          color: Colors.deepPurple,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          // Agregar un Padding al botón de envio
+                          child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              child: Text(
+                                'Ingresar',
+                                style: TextStyle(color: Colors.white),
+                              )),
+                        )
+                      ],
+                    ))
               ],
             ),
           ),
