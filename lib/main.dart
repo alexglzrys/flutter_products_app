@@ -10,11 +10,15 @@ class ProductsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Productos App',
-      initialRoute: HomeScreen.screenName,
+      initialRoute: LoginScreen.screenName,
       routes: {
         HomeScreen.screenName: (context) => const HomeScreen(),
         LoginScreen.screenName: (context) => const LoginScreen(),
       },
+      // Configuración del tema principal de la aplicación
+      // Se toma una copia completa del tema light, y se sobreescribe el color de fondo de todos los widgets Scaffold
+      theme:
+          ThemeData.light().copyWith(scaffoldBackgroundColor: Colors.grey[300]),
     );
   }
 }
