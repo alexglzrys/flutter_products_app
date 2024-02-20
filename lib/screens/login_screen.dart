@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:products_flutter_app/providers/login_form_provider.dart';
+import 'package:products_flutter_app/screens/screens.dart';
 import 'package:products_flutter_app/ui/input_decorations.dart';
 import 'package:products_flutter_app/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -30,82 +33,9 @@ class LoginScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 // Contenido principal - Formulario
-                Form(
-                    // La validación de los controles de este formulario se harán en tiempo real con base a la interacción del usuario
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Column(
-                      children: [
-                        // a comparación del TextField, los TextFormField actuan como un widget avanzado que envuelve un TextField y le proporciona funciones adiconales como la validación. Asi mismo, lo integra facilmente con un formulario para que este se hga cargo de toda la gestión
-                        TextFormField(
-                          // Evitar el auto-corrector
-                          autocorrect: false,
-                          // Tipo de teclado al momento de usar la caja de texto
-                          keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(color: Colors.deepPurple),
-
-                          // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
-                          decoration: InputDecorations.authInputDecoration(
-                              labelText: 'Correo Electrónico',
-                              hintText: 'kakaroto@correo.com',
-                              prefixIcon: Icons.alternate_email),
-                          // Validación del contenido escrito en esta caja de texto
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'El correo electrónico es requerido';
-                            }
-                            // Expresión regular para la validación de correo electrónico
-                            String pattern =
-                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                            RegExp regExp = RegExp(pattern);
-                            if (!regExp.hasMatch(value)) {
-                              return 'El valor ingresado no luce como un correo válido';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          // Evitar el auto-corrector
-                          autocorrect: false,
-                          // De forma visual, el contenido de este input se mostrará ofuscado (password)
-                          obscureText: true,
-                          style: const TextStyle(color: Colors.deepPurple),
-                          // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
-                          decoration: InputDecorations.authInputDecoration(
-                              labelText: 'Contraseña',
-                              hintText: '******',
-                              prefixIcon: Icons.lock),
-                          // Validación del contenido escrito en esta caja de texto
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'La contraseña es un dato requerido';
-                            }
-                            if (value.length < 6) {
-                              return 'La contraseña debe ser de al menos 6 caracteres';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        MaterialButton(
-                          onPressed: () {
-                            // Todo: Login Submit
-                          },
-                          color: Colors.deepPurple,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          // Agregar un Padding al botón de envio
-                          child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              child: Text(
-                                'Ingresar',
-                                style: TextStyle(color: Colors.white),
-                              )),
-                        )
-                      ],
-                    ))
+                // Este widget es el único que consume el provider LoginFormProvider
+                ChangeNotifierProvider(
+                    create: (_) => LoginFormProvider(), child: _LoginForm())
               ],
             ),
           ),
@@ -119,5 +49,101 @@ class LoginScreen extends StatelessWidget {
         ],
       ),
     )));
+  }
+}
+
+// Widget encargado de mostrar el contenido del formulario de Login
+class _LoginForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Hacer referencia al provider que consume este widget
+    final loginForm = Provider.of<LoginFormProvider>(context);
+    return Form(
+        // El key permite controlar el estado global del formulario
+        // Gracias al key podemos saber si la data ingresada en cada uno de los controles asociados a este formulario es válida
+        // Podemos resetear todo el formulario, o guardar la información con los últimos cambios introducidos (onSave)
+        key: loginForm.formKey,
+        // La validación de los controles de este formulario se harán en tiempo real con base a la interacción del usuario
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: Column(
+          children: [
+            // a comparación del TextField, los TextFormField actuan como un widget avanzado que envuelve un TextField y le proporciona funciones adiconales como la validación. Asi mismo, lo integra facilmente con un formulario para que este se hga cargo de toda la gestión
+            TextFormField(
+              // Evitar el auto-corrector
+              autocorrect: false,
+              // Tipo de teclado al momento de usar la caja de texto
+              keyboardType: TextInputType.emailAddress,
+              style: const TextStyle(color: Colors.deepPurple),
+
+              // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
+              decoration: InputDecorations.authInputDecoration(
+                  labelText: 'Correo Electrónico',
+                  hintText: 'kakaroto@correo.com',
+                  prefixIcon: Icons.alternate_email),
+              // Asociar el valor actual de este control de formulario con la propiedad email del LoginFormProvider
+              onChanged: (value) => loginForm.email = value,
+              // Validación del contenido escrito en esta caja de texto
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'El correo electrónico es requerido';
+                }
+                // Expresión regular para la validación de correo electrónico
+                String pattern =
+                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                RegExp regExp = RegExp(pattern);
+                if (!regExp.hasMatch(value)) {
+                  return 'El valor ingresado no luce como un correo válido';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              // Evitar el auto-corrector
+              autocorrect: false,
+              // De forma visual, el contenido de este input se mostrará ofuscado (password)
+              obscureText: true,
+              style: const TextStyle(color: Colors.deepPurple),
+              // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
+              decoration: InputDecorations.authInputDecoration(
+                  labelText: 'Contraseña',
+                  hintText: '******',
+                  prefixIcon: Icons.lock),
+              // Asociar el valor actual de este control de formulario con la propiedad password del LoginFormProvider
+              onChanged: (value) => loginForm.password = value,
+              // Validación del contenido escrito en esta caja de texto
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'La contraseña es un dato requerido';
+                }
+                if (value.length < 6) {
+                  return 'La contraseña debe ser de al menos 6 caracteres';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            MaterialButton(
+              onPressed: () {
+                // Si falla la validación no hago nada
+                if (!loginForm.isValidForm()) return;
+
+                // Navegar a la pantalla de Home (replacement hace que sea imposible regresar atrás)
+                Navigator.pushReplacementNamed(context, HomeScreen.screenName);
+              },
+              color: Colors.deepPurple,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              // Agregar un Padding al botón de envio
+              child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: Text(
+                    'Ingresar',
+                    style: TextStyle(color: Colors.white),
+                  )),
+            )
+          ],
+        ));
   }
 }
