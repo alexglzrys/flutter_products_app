@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:products_flutter_app/ui/input_decorations.dart';
 import 'package:products_flutter_app/widgets/widgets.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -29,7 +30,7 @@ class LoginScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 // Contenido principal - Formulario
-                const Form(
+                Form(
                     child: Column(
                   children: [
                     TextField(
@@ -37,19 +38,43 @@ class LoginScreen extends StatelessWidget {
                       autocorrect: false,
                       // Tipo de teclado al momento de usar la caja de texto
                       keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(color: Colors.deepPurple),
-                      // Decoración de la caja de texto
-                      decoration: InputDecoration(
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.deepPurple)),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.deepPurple, width: 2)),
+                      style: const TextStyle(color: Colors.deepPurple),
+                      // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
+                      decoration: InputDecorations.authInputDecoration(
                           labelText: 'Correo Electrónico',
-                          hintText: 'goku@correo.com',
-                          labelStyle: TextStyle(color: Colors.grey),
-                          prefixIcon: Icon(Icons.alternate_email,
-                              color: Colors.deepPurple)),
+                          hintText: 'kakaroto@correo.com',
+                          prefixIcon: Icons.alternate_email),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      // Evitar el auto-corrector
+                      autocorrect: false,
+                      // De forma visual, el contenido de este input se mostrará ofuscado (password)
+                      obscureText: true,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      // Decoración de la caja de texto (información situada en un método estatico de la clase personalizada InputDecorations)
+                      decoration: InputDecorations.authInputDecoration(
+                          labelText: 'Contraseña',
+                          hintText: '******',
+                          prefixIcon: Icons.lock),
+                    ),
+                    const SizedBox(height: 16),
+                    MaterialButton(
+                      onPressed: () {
+                        // Todo: Login Submit
+                      },
+                      color: Colors.deepPurple,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      // Agregar un Padding al botón de envio
+                      child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          child: Text(
+                            'Ingresar',
+                            style: TextStyle(color: Colors.white),
+                          )),
                     )
                   ],
                 ))
@@ -61,7 +86,8 @@ class LoginScreen extends StatelessWidget {
           const Text(
             'Crear una cuenta nueva',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
-          )
+          ),
+          const SizedBox(height: 50)
         ],
       ),
     )));
