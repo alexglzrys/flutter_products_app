@@ -17,8 +17,13 @@ class ProductsApp extends StatelessWidget {
       },
       // Configuración del tema principal de la aplicación
       // Se toma una copia completa del tema light, y se sobreescribe el color de fondo de todos los widgets Scaffold
-      theme:
-          ThemeData.light().copyWith(scaffoldBackgroundColor: Colors.grey[300]),
+      theme: ThemeData.light().copyWith(
+          scaffoldBackgroundColor: Colors.grey[300],
+          textTheme: const TextTheme(
+              headlineMedium: TextStyle(
+                  fontSize: 24,
+                  color: Colors.black45,
+                  fontWeight: FontWeight.w500))),
     );
   }
 }
