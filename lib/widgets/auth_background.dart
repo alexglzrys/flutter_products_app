@@ -2,19 +2,43 @@ import 'package:flutter/material.dart';
 
 // Widget encargado del color de fondo multicolor usado por la pantalla de Login
 class AuthBackground extends StatelessWidget {
-  const AuthBackground({super.key});
+  // Se requiere un widget para mostrar encima de este fondo
+  final Widget child;
+
+  const AuthBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    // Usar Container si el contenedor tendrá color, en caso contrario, se recomienda un SizeBox
+    // Usar Container si el contenedor tendrá color o márgen, en caso contrario, se recomienda un SizeBox
     return SizedBox(
       // Si no se especifica un color, el contenedor es transaparente
       // El tamaño del contenedor será igual al alto y ancho del dispositivo
       width: double.infinity,
       height: double.infinity,
-      // Se requiere un hijo flotando encima del contenedor padre (contenedor de color purpura)
+      // Se requiere un hijo flotando encima del contenedor padre (contenedor de color purpura), un Icono de cabecera, y un Hijo que actuará como contenido principal flotando sobre el fondo
       // El Stack permite colocar elementos en pila, encima del contenedor padre (posicionamiento absoluto)
-      child: Stack(children: [_PurpleBox()]),
+      child: Stack(children: [_PurpleBox(), _HeaderIcon(), child]),
+    );
+  }
+}
+
+// Widget encargado de mostrar el icono situado en la parte superior del fondo multicolo
+class _HeaderIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Por defecto, cuando se usa el Stack, todos los elementos en pila se agregan en la parte superior izquierda
+    // Sin embargo, dependiendo del dispositivo y SO. Existen áreas inseguras, las cuales son aprovechadas por los fabricantes para colocar cámaras (notch) y otros aditamentos
+    // Para controlar ese problema, SafeArea es un widget que nos tiene 100% cubiertos, pues sabe si el dispositivo actual tiene áreas inseguras o no, y en caso de tenerlas, coloca los elementos en un área segura dentro de la pantalla visible
+    return SafeArea(
+      child: Container(
+          width: double.infinity,
+          // Sin SafeArea, es posible que estas 20 unidades de separación sean insuficientes para dispositivos con áreas inseguras
+          margin: const EdgeInsets.only(top: 20),
+          child: const Icon(
+            Icons.person_pin,
+            color: Colors.white,
+            size: 100,
+          )),
     );
   }
 }
