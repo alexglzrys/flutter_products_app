@@ -22,14 +22,46 @@ class LoginScreen extends StatelessWidget {
           CardContainer(
             child: Column(
               children: [
+                // Titulo de la tarjeta
                 Text(
                   'Ingreso',
                   // Se hereda el estilo declarado en el tema principal para titulos medios
                   style: Theme.of(context).textTheme.headlineMedium,
-                )
+                ),
+                // Contenido principal - Formulario
+                const Form(
+                    child: Column(
+                  children: [
+                    TextField(
+                      // Evitar el auto-corrector
+                      autocorrect: false,
+                      // Tipo de teclado al momento de usar la caja de texto
+                      keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(color: Colors.deepPurple),
+                      // Decoración de la caja de texto
+                      decoration: InputDecoration(
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.deepPurple)),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.deepPurple, width: 2)),
+                          labelText: 'Correo Electrónico',
+                          hintText: 'goku@correo.com',
+                          labelStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(Icons.alternate_email,
+                              color: Colors.deepPurple)),
+                    )
+                  ],
+                ))
               ],
             ),
           ),
+          // Separación de 50 unidades en la vertical para colocar un texto adicional por debajo de la tarjeta
+          const SizedBox(height: 50),
+          const Text(
+            'Crear una cuenta nueva',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+          )
         ],
       ),
     )));

@@ -13,8 +13,6 @@ class CardContainer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Container(
         width: double.infinity,
-        // TODO: Retirar después, la altura será en proporción de los hijos
-        height: 300,
         padding: const EdgeInsets.all(20),
         // Para mantener fácil la lectura de este widget, su estilo y decoración se encuentra agrupada en un método privado
         decoration: _createCardShape(),
