@@ -10,7 +10,7 @@ class ProductsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Productos App',
-      initialRoute: LoginScreen.screenName,
+      initialRoute: HomeScreen.screenName,
       routes: {
         HomeScreen.screenName: (context) => const HomeScreen(),
         LoginScreen.screenName: (context) => const LoginScreen(),
@@ -24,7 +24,15 @@ class ProductsApp extends StatelessWidget {
               headlineMedium: TextStyle(
                   fontSize: 24,
                   color: Colors.black45,
-                  fontWeight: FontWeight.w500))),
+                  fontWeight: FontWeight.w500)),
+          // Estilos globales para los appBar
+          appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.deepPurple,
+              elevation: 0,
+              centerTitle: true),
+          // Estilos globales para el FloatingActionButton
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.deepPurple, elevation: 0)),
     );
   }
 }
