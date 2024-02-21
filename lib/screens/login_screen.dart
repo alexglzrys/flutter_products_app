@@ -124,23 +124,43 @@ class _LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             MaterialButton(
-              onPressed: () {
-                // Si falla la validación no hago nada
-                if (!loginForm.isValidForm()) return;
+              // Deshabilitar el botón si hay un procesamiento de envío de formulario,
+              // esto lo sabemos gracias a isLoading
+              // Un botón queda deshabilitdo en Flutter si pasamos null a la propiedad onPressed
+              onPressed: loginForm.isLoading
+                  ? null
+                  : () async {
+                      // Ocultar el teclado para dejar libre la zona del formulario en caso de que existan errores de validación por atender
+                      FocusScope.of(context).unfocus();
 
-                // Navegar a la pantalla de Home (replacement hace que sea imposible regresar atrás)
-                Navigator.pushReplacementNamed(context, HomeScreen.screenName);
-              },
+                      // Si falla la validación no hago nada
+                      if (!loginForm.isValidForm()) return;
+
+                      // TODO: Simulación de respuesta HTTP
+                      loginForm.isLoading = true;
+                      await Future.delayed(const Duration(seconds: 2));
+                      // Después de resolverse la promesa, es importante...
+                      // Comprobar si el widget asociado al contexto está montado actualmente en el árbol de widgets. Esto ayuda a prevenir problemas que ocurren cuando se intenta interactuar con un widget que ya no forma parte de la escena
+                      if (!context.mounted) return;
+                      loginForm.isLoading = false;
+
+                      // Navegar a la pantalla de Home (replacement hace que sea imposible regresar atrás)
+                      Navigator.pushReplacementNamed(
+                          context, HomeScreen.screenName);
+                    },
               color: Colors.deepPurple,
               elevation: 0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
+              disabledColor: Colors.grey[400],
               // Agregar un Padding al botón de envio
-              child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  // Cambiar el texto del botón con base al estado de isLoading
                   child: Text(
-                    'Ingresar',
-                    style: TextStyle(color: Colors.white),
+                    loginForm.isLoading ? 'Espere...' : 'Ingresar',
+                    style: const TextStyle(color: Colors.white),
                   )),
             )
           ],
