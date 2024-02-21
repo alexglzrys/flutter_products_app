@@ -14,6 +14,7 @@ class ProductsApp extends StatelessWidget {
       routes: {
         HomeScreen.screenName: (context) => const HomeScreen(),
         LoginScreen.screenName: (context) => const LoginScreen(),
+        ProductScreen.screenName: (context) => const ProductScreen()
       },
       // Configuración del tema principal de la aplicación
       // Se toma una copia completa del tema light, y se sobreescribe el color de fondo de todos los widgets Scaffold

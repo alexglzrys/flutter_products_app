@@ -3,3 +3,4 @@
 
 export 'package:products_flutter_app/screens/home_screen.dart';
 export 'package:products_flutter_app/screens/login_screen.dart';
+export 'package:products_flutter_app/screens/product_screen.dart';
