@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:products_flutter_app/screens/screens.dart';
+import 'package:products_flutter_app/services/products_service.dart';
 import 'package:products_flutter_app/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,6 +11,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener la instancia del provider ProductService
+    final productService = Provider.of<ProductsService>(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Productos')),
       // Se recomienda usar ListView.builder cuando la cantidad de elementos a mostrar en la lista es dinámica o desconocida

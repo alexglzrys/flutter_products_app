@@ -7,14 +7,15 @@ class Product {
   bool available;
   String name;
   String? picture;
-  bool price;
+  double price;
+  String? id;
 
-  Product({
-    required this.available,
-    required this.name,
-    required this.price,
-    this.picture,
-  });
+  Product(
+      {required this.available,
+      required this.name,
+      required this.price,
+      this.picture,
+      this.id});
 
   // Retorna una instancia de Product, a partir de una cadena de texto que tiene pinta de un json
   factory Product.fromRawJson(String str) => Product.fromJson(json.decode(str));
