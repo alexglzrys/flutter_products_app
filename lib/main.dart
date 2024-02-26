@@ -1,7 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:products_flutter_app/screens/screens.dart';
+import 'package:products_flutter_app/services/services.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const ProductsApp());
+// Primero se crea el estado global de la aplciación, y luego se carga la aplicación principal
+void main() => runApp(const AppState());
+
+// La instancia de ProductService debe existir en todo momento en mi aplciación, o por lo menos cuando se accede a la pantalla de productos
+// ? El Provider nos ofrece su mecanismo de crear las instancias que extienden de ChangeNotifier de forma peresoza cuando algún widget descendiente lo neesita por primera vez, o de forma inmediata.
+// por tanto si necesitamos que el servicio este disponible de forma global en la aplicación, lo invocamos desde el estado global de la aplicación, además la instancia debe ser lazy, ya que los productos se deberían cargar siempre y cuando el user este logeado (esto mejora el rendimiento de la app).
+class AppState extends StatelessWidget {
+  const AppState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ProductsService(),
+          lazy: true,
+        )
+      ],
+      // Los providers declarados en el listado estárán disponibles en toda la aplicación
+      child: const ProductsApp(),
+    );
+  }
+}
 
 class ProductsApp extends StatelessWidget {
   const ProductsApp({super.key});
