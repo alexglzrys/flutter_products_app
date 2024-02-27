@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:products_flutter_app/models/models.dart';
 
 // Widget encargado de mostrar la tarjeta para representar un producto particular
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  // Se requiere información de un Producto para mostrar en este widget
+  final Product product;
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +23,19 @@ class ProductCard extends StatelessWidget {
         child: Stack(
           children: [
             // Este widget ocupa el 100% del alto y ancho de su contenedor padre, por tanto no hay necesidad de posicionarlo
-            _BackgroundProductCard(),
-            Positioned(top: 0, right: 0, child: _PriceTagProductCard()),
+            _BackgroundProductCard(product.picture),
+            Positioned(
+                top: 0, right: 0, child: _PriceTagProductCard(product.price)),
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
-              child: _DetailsProductCard(),
+              child: _DetailsProductCard(
+                  title: product.name, description: product.id),
             ),
-            // Todo: Mostrar este widget de forma condicional
-            Positioned(top: 0, left: 0, child: _NotAvailable())
+            // Mostrar este widget solo si el producto no se encuentra disponible
+            if (!product.available)
+              Positioned(top: 0, left: 0, child: _NotAvailable())
           ],
         ),
       ),
@@ -66,33 +72,39 @@ class _NotAvailable extends StatelessWidget {
 
 // Widget privado encargado de mostrar los detalles del producto
 class _DetailsProductCard extends StatelessWidget {
+  final String title;
+  final String? description;
+
+  const _DetailsProductCard({this.description, required this.title});
+
   @override
   Widget build(BuildContext context) {
     // FractionallySizedBox permite dimensionar sus hijos como una fracción del espacio total disponible
     // En este ejemplo le estamos diciendo a flutter que el Contenedor ocupará el 85% del ancho de su componente padre
     return FractionallySizedBox(
-      widthFactor: 0.85,
+      widthFactor: 0.75,
       // El contenedor quedará alineado a la izquierda dentro del espacio asignado
       alignment: Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         decoration: _decorationDetailsProductCard(),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Disco de estado sólido 512 GB',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              title,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
               // Este texto solo puede mostrarse en un solo renglón
               maxLines: 1,
               // Si el contendio excede el espacio disponible, se muestran puntos suspensivos
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: 2),
-            Text(
-              'ID del disco de estado sólido',
-              style: TextStyle(fontSize: 12),
-            )
+            const SizedBox(height: 2),
+            if (description != null)
+              Text(
+                description!,
+                style: const TextStyle(fontSize: 12),
+              )
           ],
         ),
       ),
@@ -110,6 +122,10 @@ class _DetailsProductCard extends StatelessWidget {
 
 // Widget privado encargado de mostrar el precio de un producto
 class _PriceTagProductCard extends StatelessWidget {
+  final double price;
+
+  const _PriceTagProductCard(this.price);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -120,12 +136,12 @@ class _PriceTagProductCard extends StatelessWidget {
       alignment: Alignment.center,
       decoration: _decorationPriceTagProductCard(),
       // FittedBox es un widget ayuda a evitar sus hijos crezcan más allá de cierto límite, reescalándolos según el espacio disponible
-      child: const FittedBox(
+      child: FittedBox(
         fit: BoxFit.contain,
         // Necesitamos escapar el símbolo $ con \, ya que $ dentro de una cadena en flutter permite interpolar el contenido de una variable
         child: Text(
-          '\$ 1089.50',
-          style: TextStyle(fontSize: 15),
+          '\$ $price',
+          style: const TextStyle(fontSize: 15),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -144,23 +160,31 @@ class _PriceTagProductCard extends StatelessWidget {
 
 // Widget privado encargado de mostrar la imagen de producto
 class _BackgroundProductCard extends StatelessWidget {
+  final String? picture;
+
+  const _BackgroundProductCard(this.picture);
   @override
   Widget build(BuildContext context) {
     // Para lograr que la imagen se ajuste a los bordes redondeados de su padre, es necesario usar ClipRRect como envoltura de la imagen
     // Esto recortara la imagen para que se ajuste a los bordes de su contenedor
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
-      child: const SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        // FadeInImage, se recomienda usarlo en imagenes que son consumidas desde servicios externos (servidores http)
-        child: FadeInImage(
-          placeholder: AssetImage('assets/jar-loading.gif'),
-          image: NetworkImage('https://placehold.jp/ffffff/878787/400x300.png'),
-          // Ajustar ambas imagenes al mismo tamaño que su contenedor padre
-          fit: BoxFit.cover,
-        ),
-      ),
+      child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          // Comprobar si el producto tiene imagen asignada, en caso contrario mostrar una por defecto
+          child: picture == null
+              ? const Image(
+                  image: AssetImage('assets/no-image.png'),
+                  fit: BoxFit.cover,
+                )
+              // FadeInImage, se recomienda usarlo en imagenes que son consumidas desde servicios externos (servidores http)
+              : FadeInImage(
+                  placeholder: const AssetImage('assets/jar-loading.gif'),
+                  image: NetworkImage(picture!),
+                  // Ajustar ambas imagenes al mismo tamaño que su contenedor padre
+                  fit: BoxFit.cover,
+                )),
     );
   }
 }
