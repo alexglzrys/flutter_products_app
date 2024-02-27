@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:products_flutter_app/services/services.dart';
 import 'package:products_flutter_app/ui/input_decorations.dart';
 import 'package:products_flutter_app/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class ProductScreen extends StatelessWidget {
   const ProductScreen({super.key});
@@ -9,6 +11,9 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener la instancia del provider ProductService
+    final productService = Provider.of<ProductsService>(context);
+
     return Scaffold(
       // Colocar el contenido principa en un área segura, esta pantalla no tendrá AppBar
       body: SafeArea(
@@ -20,7 +25,8 @@ class ProductScreen extends StatelessWidget {
 
           // Imagen previa del producto y botones de acción
           Stack(children: [
-            const ProductImage(),
+            // Pasar como paràmetro nombrado, la imagen del producto seleccionado
+            ProductImage(picture: productService.selectedProduct.picture),
             Positioned(
               top: 20,
               left: 20,

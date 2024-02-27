@@ -17,6 +17,11 @@ class Product {
       this.picture,
       this.id});
 
+  // Método que retorna una nueva copia de Producto
+  // En Dart los objetos son pasados por referencia, en este sentido, este método es un salvavidas para evitar modificar el objeto original de forma accidental
+  Product copyWith() => Product(
+      available: available, name: name, price: price, picture: picture, id: id);
+
   // Retorna una instancia de Product, a partir de una cadena de texto que tiene pinta de un json
   factory Product.fromRawJson(String str) => Product.fromJson(json.decode(str));
 

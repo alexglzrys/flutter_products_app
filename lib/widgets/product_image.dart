@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 // Widget encargado de mostrar la vistra previa de un producto a registrar
 class ProductImage extends StatelessWidget {
-  const ProductImage({super.key});
+  // Este widget puede mostrar una imagen dinàmica si esta es pasada como paràmetro
+  final String? picture;
+  const ProductImage({super.key, this.picture});
 
   @override
   Widget build(BuildContext context) {
@@ -11,14 +13,18 @@ class ProductImage extends StatelessWidget {
       width: double.infinity,
       height: 300,
       decoration: _decorationProductScreen(),
-      child: const ClipRRect(
-        borderRadius: BorderRadius.only(
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-        child: FadeInImage(
-          placeholder: AssetImage('assets/jar-loading.gif'),
-          image: NetworkImage('https://placehold.jp/9022c3/ffffff/400x300.png'),
-          fit: BoxFit.cover,
-        ),
+        // Verificar si existe una imagen para el producto seleccionado
+        child: picture == null
+            ? const Image(
+                image: AssetImage('assets/no-image.png'), fit: BoxFit.cover)
+            : FadeInImage(
+                placeholder: const AssetImage('assets/jar-loading.gif'),
+                image: NetworkImage(picture!),
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }

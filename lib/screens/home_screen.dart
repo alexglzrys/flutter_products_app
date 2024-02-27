@@ -29,6 +29,12 @@ class HomeScreen extends StatelessWidget {
         // Algunos Widgets como Container o Card no tienen capacidad de detecciòn de gestos incorporados (onTap). Al envolverslos dentro de un GestureDetector habilita esta capacidad para detectar y responder a varios tipos de gestos como: tocar, tocar dos veces, arrastrar, soltar, pellizcar, hacer zoom, deslizar, etc.
         itemBuilder: (context, index) => GestureDetector(
             onTap: () {
+              // Se puede pasar la información del producto a la siguiente pantalla a través de la URL
+              // Sin embargo, usamos otra alternativa aprovechando que tenemos un gestor de estado
+              // Realizar una copia del producto, y almacenarla como producto seleccionado (en Dart los objetos son pasamos como referencia)
+              productService.selectedProduct =
+                  productService.products[index].copyWith();
+
               // Navegar a la pantalla de producto
               Navigator.pushNamed(context, ProductScreen.screenName);
             },

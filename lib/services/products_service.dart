@@ -10,6 +10,8 @@ class ProductsService extends ChangeNotifier {
   final String _baseUrl = 'training-flutter-dev-default-rtdb.firebaseio.com';
   final List<Product> products = [];
   bool isLoading = true;
+  // su valor será inicializado más tarde cuando el usuario seleccione un producto, mientras tanto serà nula
+  late Product selectedProduct;
 
   ProductsService() {
     // En el momento que se genere la instancia de ProductService, cargamos el listado de productos
