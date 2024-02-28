@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:products_flutter_app/models/models.dart';
 import 'package:products_flutter_app/screens/screens.dart';
 import 'package:products_flutter_app/services/products_service.dart';
 import 'package:products_flutter_app/widgets/widgets.dart';
@@ -46,7 +47,16 @@ class HomeScreen extends StatelessWidget {
       // Botón flotante situado (por defecto) en la parte inferior derecha
       // Puede contener cualquier widget, pero generalmente se hace uso de botones de acción
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          // Registrar un nuevo producto
+
+          // Genero el esqueleto mínimo necesrio para registrar un nuevo producto
+          // Como no existe un producto seleccionado, necesito crear la instancia de un nuevo producto con valores por defecto para que sea editado en la pantalla siguiente
+          productService.selectedProduct =
+              Product(available: false, name: '', price: 0);
+          // Mostrar pantalla encargada del registro o actualización de productos
+          Navigator.pushNamed(context, ProductScreen.screenName);
+        },
         child: const Icon(Icons.add),
       ),
     );

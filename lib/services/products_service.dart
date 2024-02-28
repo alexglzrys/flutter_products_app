@@ -53,6 +53,7 @@ class ProductsService extends ChangeNotifier {
 
     if (product.id == null) {
       // Se trata de un nuevo registro
+      await _createProduct(product);
     } else {
       // Se trata de una actualización de un producto existente
       await _updateProduct(product);
@@ -74,6 +75,21 @@ class ProductsService extends ChangeNotifier {
 
     // Actualizar la lista de productos con los nuevos cambios del producto modificado.
     _findAndUpdateProduct(products, product);
+    return product.id!;
+  }
+
+  // Método privado encargado de registrar un neuvo Producto en Firebase Realtime Database
+  Future<String> _createProduct(Product product) async {
+    // La siguiente linea genera... https://training-flutter-dev-default-rtdb.firebaseio.com/products.json
+    final url = Uri.https(_baseUrl, 'products.json');
+    // El cuerpo de la petición espera un objeto, para este este caso un Product en formato JSON
+    final response = await http.post(url, body: product.toRawJson());
+    // Firebase regresa un Json en formato de String con el id del nuevo producto registrado {"name": "nuevo_id_generado"}
+    final decodedData = json.decode(response.body);
+    // Agregar el id a este nuevo producto (el ID lo genera de forma automática Firebase Realtime Database)
+    product.id = decodedData['name'];
+    // Agregar el nuevo producto registrado a la lista de productos.
+    products.add(product);
     return product.id!;
   }
 
