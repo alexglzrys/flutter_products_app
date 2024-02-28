@@ -35,6 +35,8 @@ class _ProductScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Acceder al ProductFormProvider y obtener la información del producto seleccionado
+    final productFormProvider = Provider.of<ProductFormProvider>(context);
     return Scaffold(
       // Colocar el contenido principa en un área segura, esta pantalla no tendrá AppBar
       body: SafeArea(
@@ -61,8 +63,17 @@ class _ProductScreenBody extends StatelessWidget {
         ])),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Todo: Guardar información del producto
+        onPressed: () async {
+          // Guardar o actualizar información del producto
+
+          // Ocultar el teclado para ver el estado de la operación
+          FocusScope.of(context).unfocus();
+
+          // Verificar si el formulario es válido
+          if (!productFormProvider.isValidForm()) return;
+
+          // ? Invocar el servicio para guardar o actualizar el producto seleccionado, mismo que se encuentra en ProductFormProvider
+          await productService.saveOrCreateProduct(productFormProvider.product);
         },
         child: const Icon(Icons.save_outlined),
       ),
@@ -85,6 +96,8 @@ class _ProductForm extends StatelessWidget {
       decoration: _decorationProductForm(),
       child: Form(
           key: productForm.formKey,
+          // Validar los campos del formulario en tiempo real, con base en la interacción del usuario
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(children: [
             TextFormField(
               autocorrect: true,
