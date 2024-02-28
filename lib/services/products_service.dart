@@ -68,8 +68,24 @@ class ProductsService extends ChangeNotifier {
     final url = Uri.https(_baseUrl, 'products/${product.id}.json');
     // El cuerpo de la petición espera un objeto, para este este caso un Product en formato JSON
     final response = await http.put(url, body: product.toRawJson());
-    final decodedData = response.body;
-    print(decodedData);
+
+    //final decodedData = response.body;
+    //print(decodedData);
+
+    // Actualizar la lista de productos con los nuevos cambios del producto modificado.
+    _findAndUpdateProduct(products, product);
     return product.id!;
+  }
+
+  // Método privado para actualizar el listado de productos con los nuevos cambios de un producto recientemente modificado.
+  void _findAndUpdateProduct(List<Product> products, Product product) {
+    // Buscar dentro del listado de productos, el indice o posición del producto recientemente modificado (con base en su id)
+    int index = products
+        .indexWhere((currentProduct) => currentProduct.id == product.id);
+    // Si el índice es díferente de -1, significa que se localizó el producto en el listado
+    if (index != -1) {
+      // Las listas en Dart pasan como referencia, por tanto, en la posición actual coloco el producto con su nueva información
+      products[index] = product;
+    }
   }
 }
