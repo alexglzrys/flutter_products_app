@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:flutter/services.dart';
 import 'package:products_flutter_app/providers/product_form_provider.dart';
 import 'package:products_flutter_app/services/services.dart';
@@ -55,7 +57,11 @@ class _ProductScreenBody extends StatelessWidget {
               left: 20,
               child: _BackButtonProductScreen(),
             ),
-            Positioned(top: 20, right: 20, child: _CameraButtonProductScreen())
+            Positioned(
+                top: 20,
+                right: 20,
+                child:
+                    _CameraButtonProductScreen(productService: productService))
           ]),
           // Formulario
           _ProductForm(),
@@ -187,11 +193,24 @@ class _ProductForm extends StatelessWidget {
 
 // Widget encargado de mostrar el botón de ir atrás
 class _CameraButtonProductScreen extends StatelessWidget {
+  const _CameraButtonProductScreen({required this.productService});
+  final ProductsService productService;
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          // Todo: Activar camara o galería
+        onPressed: () async {
+          // Activar camara o galería mediante el plugin image_picker
+          final ImagePicker picker = ImagePicker();
+          // La fuente de información será la camara, y la calidad de la imagen será del 100%
+          final XFile? photo = await picker.pickImage(
+              source: ImageSource.camera, imageQuality: 100);
+
+          if (photo == null) return;
+
+          print('Tenemos imagen en la ruta: ${photo.path}');
+          // Asignar el path de imagen al nuevo producto, o producto previamente seleccionado
+          productService.updateSelectedProductImage(photo.path);
         },
         icon: const Icon(
           Icons.camera_alt_outlined,

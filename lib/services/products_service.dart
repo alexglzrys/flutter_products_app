@@ -68,7 +68,7 @@ class ProductsService extends ChangeNotifier {
     // La siguiente linea genera... https://training-flutter-dev-default-rtdb.firebaseio.com/products/ABC01.json
     final url = Uri.https(_baseUrl, 'products/${product.id}.json');
     // El cuerpo de la petición espera un objeto, para este este caso un Product en formato JSON
-    final response = await http.put(url, body: product.toRawJson());
+    await http.put(url, body: product.toRawJson());
 
     //final decodedData = response.body;
     //print(decodedData);
@@ -103,5 +103,11 @@ class ProductsService extends ChangeNotifier {
       // Las listas en Dart pasan como referencia, por tanto, en la posición actual coloco el producto con su nueva información
       products[index] = product;
     }
+  }
+
+  // Método para asignar o actualizar la ruta de imagen referente a un producto seleccionado
+  void updateSelectedProductImage(String? path) {
+    selectedProduct.picture = path;
+    notifyListeners();
   }
 }
