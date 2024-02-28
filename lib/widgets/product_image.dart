@@ -13,25 +13,29 @@ class ProductImage extends StatelessWidget {
       width: double.infinity,
       height: 300,
       decoration: _decorationProductScreen(),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-        // Verificar si existe una imagen para el producto seleccionado
-        child: picture == null
-            ? const Image(
-                image: AssetImage('assets/no-image.png'), fit: BoxFit.cover)
-            : FadeInImage(
-                placeholder: const AssetImage('assets/jar-loading.gif'),
-                image: NetworkImage(picture!),
-                fit: BoxFit.cover,
-              ),
+      // El widget Opacity, aplica una determinada opacidad a sus elementos hijos
+      child: Opacity(
+        opacity: 0.85,
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+          // Verificar si existe una imagen para el producto seleccionado
+          child: picture == null
+              ? const Image(
+                  image: AssetImage('assets/no-image.png'), fit: BoxFit.cover)
+              : FadeInImage(
+                  placeholder: const AssetImage('assets/jar-loading.gif'),
+                  image: NetworkImage(picture!),
+                  fit: BoxFit.cover,
+                ),
+        ),
       ),
     );
   }
 
   // Método privado encargado de dar decoración al contenedor de la imagen
   BoxDecoration _decorationProductScreen() => BoxDecoration(
-          color: Colors.white,
+          color: Colors.black,
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(15), topRight: Radius.circular(15)),
           boxShadow: [

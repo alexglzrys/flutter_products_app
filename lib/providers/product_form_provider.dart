@@ -12,6 +12,13 @@ class ProductFormProvider extends ChangeNotifier {
   // Este constructor está utilizando una sintaxis abreviada en Dart para asignar automáticamente el parámetro a la variable de instancia (propiedad product)
   ProductFormProvider(this.product);
 
+  // Método para actualizar el estado de la disponibilidad del producto seleccionado
+  updateAvailability(bool value) {
+    product.available = value;
+    // Notificar a los listeners para que actualicen la UI (el control de switch cambie de estado o comportamiento)
+    notifyListeners();
+  }
+
   bool isValidForm() {
     return formKey.currentState?.validate() ?? false;
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:products_flutter_app/providers/product_form_provider.dart';
 import 'package:products_flutter_app/services/services.dart';
 import 'package:products_flutter_app/ui/input_decorations.dart';
@@ -110,6 +111,12 @@ class _ProductForm extends StatelessWidget {
               keyboardType: TextInputType.number,
               // Las cajas de texto trabajan con datos de tipo String, por tanto hay que parsear
               initialValue: product.price.toString(),
+              // aplicar formateadores de texto al contenido de ese control de formulario
+              // puede haber N cantidad de formateadores declarados, y su ejecución será en el orden proporcionado cuando el usuario cambia el texto en el widget
+              inputFormatters: [
+                // Solo se permiten cualquier cantidad de números, un solo punto, y hasta 2 números decimales
+                FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
+              ],
               onChanged: (value) {
                 // Verificar si el valor se puede parsear a un tipo double
                 if (double.tryParse(value) == null) {
@@ -132,7 +139,9 @@ class _ProductForm extends StatelessWidget {
             // El constructor adaptative de un SwitchListTile, le indica a Flutter que use un control de Switch con la apariecnia nativa de la plataforma o SO
             SwitchListTile.adaptive(
               value: product.available,
-              onChanged: (value) => product.available = value,
+              // onChanged: (value) => productForm.updateAvailability(value),
+              // ? En Dart, cuando una función recibe un único parámetro, se puede pasar directamente el nombre de la función como referencia
+              onChanged: productForm.updateAvailability,
               activeColor: Colors.deepPurple,
               // Retirar padding aplicado por defecto en este tipo de control
               contentPadding: EdgeInsets.zero,
