@@ -69,19 +69,32 @@ class _ProductScreenBody extends StatelessWidget {
         ])),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Guardar o actualizar información del producto
+        // El botón debe esta inactivo cuando hay un proceso de guardado en progreso
+        onPressed: productService.isSaving
+            ? null
+            : () async {
+                // Guardar o actualizar información del producto
 
-          // Ocultar el teclado para ver el estado de la operación
-          FocusScope.of(context).unfocus();
+                // Ocultar el teclado para ver el estado de la operación
+                FocusScope.of(context).unfocus();
 
-          // Verificar si el formulario es válido
-          if (!productFormProvider.isValidForm()) return;
+                // Verificar si el formulario es válido
+                if (!productFormProvider.isValidForm()) return;
 
-          // ? Invocar el servicio para guardar o actualizar el producto seleccionado, mismo que se encuentra en ProductFormProvider
-          await productService.saveOrCreateProduct(productFormProvider.product);
-        },
-        child: const Icon(Icons.save_outlined),
+                // * Invocar el servicio para subir imagen
+                final String? imageUrl = await productService.uploadImage();
+                // Si existe imagen, actualizar la propiedad picture del producto por la URL que ofrece Cloudinary
+                if (imageUrl != null) {
+                  productFormProvider.product.picture = imageUrl;
+                }
+                // ? Invocar el servicio para guardar o actualizar el producto seleccionado, mismo que se encuentra en ProductFormProvider
+                await productService
+                    .saveOrCreateProduct(productFormProvider.product);
+              },
+        // Colocar un indicador de progreso cuando exista una tarea de guardado en proceso
+        child: productService.isSaving
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Icon(Icons.save_outlined),
       ),
     );
   }

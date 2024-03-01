@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ class ProductsService extends ChangeNotifier {
   bool isSaving = false;
   // su valor será inicializado más tarde cuando el usuario seleccione un producto, mientras tanto serà nula
   late Product selectedProduct;
+  File? newPictureFile;
 
   ProductsService() {
     // En el momento que se genere la instancia de ProductService, cargamos el listado de productos
@@ -108,6 +110,48 @@ class ProductsService extends ChangeNotifier {
   // Método para asignar o actualizar la ruta de imagen referente a un producto seleccionado
   void updateSelectedProductImage(String? path) {
     selectedProduct.picture = path;
+    // bandera que indica que hay actualmente una imagen seleccionada (se usará para subir el archivo en Cloudinary)
+    newPictureFile = File.fromUri(Uri(path: path));
     notifyListeners();
+  }
+
+  // Método para subir la imagen de producto al servicio de Cloudinary mediante su servicio de Upload REST API Call
+  Future<String?> uploadImage() async {
+    // Verificar que se tenga un path de imagen seleccionada (el valor en esta propiedad existe si se ha seleccionado un producto con la cámara)
+    if (newPictureFile == null) return null;
+
+    // cambiar estado a guardado de información en progreso
+    isSaving = true;
+    notifyListeners();
+
+    // Enviar imagen al servicio de Cloudinary
+
+    // La siguiente URI apunta al servicio que ofrece Cloudinary para la subida de imagenes que no requieren autenticación
+    const URI_API_REST =
+        'https://api.cloudinary.com/v1_1/diotlmzzk/image/upload?upload_preset=flutter_products';
+    // Establecer url
+    final url = Uri.parse(URI_API_REST);
+    // Indicar que se enviarán archivos en el cuerpo de la petición (Multi Part)
+    final imageUploadRequest = http.MultipartRequest('post', url);
+    // Seleccionar y preparar archivo
+    final file =
+        await http.MultipartFile.fromPath('file', newPictureFile!.path);
+    // Adjuntar archivo en la petición
+    imageUploadRequest.files.add(file);
+    // Enviar la petición
+    final streamResponse = await imageUploadRequest.send();
+    final response = await http.Response.fromStream(streamResponse);
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      print('Algo ha salido mal al intentar subir la imagen a Cloudinary');
+      print(response.body);
+      return null;
+    }
+
+    // Establecer el archivo seleccionado a null
+    newPictureFile = null;
+    // Decodificar la respuesta que entrega el servicio de Cloudinary para obtener el url que apunta al recurso subido
+    final decodedData = json.decode(response.body);
+    return decodedData['secure_url'];
   }
 }
